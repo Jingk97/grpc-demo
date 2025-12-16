@@ -1,0 +1,20 @@
+syntax = "proto3";
+option go_package = "hello-server/hello_client";
+package pb;
+
+// 定义服务
+service Greeter{
+  rpc SayHello(HelloRequest)returns(HelloResponse){}
+  // 流式数据
+  rpc LotsOfSayHello(HelloRequest)returns(stream HelloResponse){}
+}
+
+// 定义消息
+message HelloRequest{
+  string name=1;
+  int64 age=2;
+}
+
+message HelloResponse{
+  string msg=1;
+}
