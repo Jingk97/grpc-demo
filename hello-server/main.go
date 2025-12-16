@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"hello-server/pb"
+	"io"
 	"net"
 )
 
@@ -32,6 +33,40 @@ func (s *server) LotsOfSayHello(req *hello_server.HelloRequest, stream hello_ser
 		}
 	}
 	return nil
+}
+
+func (s *server) LotsOfSendHello(stream hello_server.Greeter_LotsOfSendHelloServer) error {
+	respMsg := "你们好："
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&hello_server.HelloResponse{
+				Msg: respMsg,
+			})
+		}
+		if err != nil {
+			return err
+		}
+		respMsg += resp.Name + ","
+	}
+}
+
+func (s *server) StreamSayHello(stream hello_server.Greeter_StreamSayHelloServer) error {
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		err = stream.Send(&hello_server.HelloResponse{
+			Msg: fmt.Sprintf("你好啊：%s，您的年龄是%d岁！", resp.Name, resp.Age),
+		})
+		if err != nil {
+			return err
+		}
+	}
 }
 
 func main() {

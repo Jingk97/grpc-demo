@@ -5,9 +5,12 @@ package pb;
 // 定义服务
 service Greeter{
   rpc SayHello(HelloRequest)returns(HelloResponse){}
-  // 流式数据
+  // 流式数据(server)
   rpc LotsOfSayHello(HelloRequest)returns(stream HelloResponse){}
-}
+  // 流式数据（client）
+  rpc LotsOfSendHello(stream HelloRequest)returns(HelloResponse){}
+  // 流式数据（server & client）
+  rpc StreamSayHello(stream HelloRequest)returns(stream HelloResponse){}}
 
 // 定义消息
 message HelloRequest{
